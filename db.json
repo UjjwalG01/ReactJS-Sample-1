@@ -1,0 +1,16 @@
+{
+  "tasks": [
+    {
+      "id": 2,
+      "text": "Meeting at Office",
+      "date": "30th Sep 2023",
+      "reminder": false
+    },
+    {
+      "id": 3,
+      "text": "Go Shopping",
+      "date": "2nd Oct 2023",
+      "reminder": true
+    }
+  ]
+}

@@ -1,40 +1,51 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import Tasks from "./components/Tasks";
 import AddTask from "./components/AddTask";
 
 function App() {
   const [showAddTask, setShowAddTask] = useState(false);
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      text: "Doctor Appointment",
-      date: "25th Sep 2023",
-      reminder: true,
-    },
-    {
-      id: 2,
-      text: "Meeting at Office",
-      date: "30th Sep 2023",
-      reminder: true,
-    },
-    {
-      id: 3,
-      text: "Go Shopping",
-      date: "2nd Oct 2023",
-      reminder: false,
-    },
-  ]);
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    const getTasks = async () => {
+      const dataFromServer = await fetchTasks();
+      setTasks(dataFromServer);
+    };
+    getTasks();
+  }, []);
+
+  // Fetch Tasks
+  const fetchTasks = async () => {
+    const res = await fetch("http://localhost:5000/tasks");
+    const data = await res.json();
+    return data;
+    console.log(data);
+  };
 
   // Add Tasks
-  const addTask = (task) => {
-    const id = Math.ceil(Math.random() * 10000) + 1;
-    const newTask = { id, ...task };
-    setTasks([...tasks, newTask]);
+  const addTask = async (task) => {
+    const res = await fetch("http://localhost:5000/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(task),
+    });
+
+    const data = await res.json();
+    setTasks([...tasks, data]);
+
+    // const id = Math.ceil(Math.random() * 10000) + 1;
+    // const newTask = { id, ...task };
+    // setTasks([...tasks, newTask]);
   };
 
   // Delete Tasks
-  const deleteTask = (id) => {
+  const deleteTask = async (id) => {
+    // Deletes form DB
+    await fetch(`http://localhost:5000/tasks/${id}`, { method: "DELETE" });
+    // Deletes form UI
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
